@@ -1,8 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader } from "../components/ui/card";
-import { CardTitle } from '../components/ui/card';
-
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import DataForm from '../components/DataForm';
 import { api } from '../services/api';
 
@@ -19,12 +17,12 @@ const AddData = () => {
   };
 
   return (
-    <Card>
+    <Card className="max-w-2xl mx-auto mt-8">
       <CardHeader>
         <CardTitle>Add New Transaction</CardTitle>
       </CardHeader>
       <CardContent>
-        <DataForm onSubmit={handleSubmit} />
+        <DataForm onSubmit={handleSubmit} onCancel={() => navigate('/')} />
       </CardContent>
     </Card>
   );

@@ -10,8 +10,15 @@ const Home = () => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [groupedData, setGroupedData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const groupDataByDate = (data) => {
+    if (!Array.isArray(data)) {
+      console.error('Data is not an array:', data);
+      return {};
+    }
+    
     return data.reduce((acc, transaction) => {
       const date = new Date(transaction.transactionDate);
       const year = date.getFullYear();
@@ -34,28 +41,66 @@ const Home = () => {
 
   const fetchTransactions = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
       const response = await api.getAllTransactions();
+      
+      if (!response || !response.data) {
+        throw new Error('Invalid response format');
+      }
+
       setTransactions(response.data);
       setGroupedData(groupDataByDate(response.data));
     } catch (error) {
       console.error('Error fetching transactions:', error);
+      setError(error.message || 'Failed to fetch transactions');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (error) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-6">
+          <div className="text-red-600">
+            Error loading transactions: {error}
+            <Button 
+              onClick={fetchTransactions} 
+              className="ml-4"
+              variant="outline"
+            >
+              Retry
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Transactions</CardTitle>
-        <Button onClick={() => navigate('/add')} className="flex items-center gap-2">
+        <Button 
+          onClick={() => navigate('/add')} 
+          className="flex items-center gap-2"
+        >
           <Plus className="h-4 w-4" /> Add New
         </Button>
       </CardHeader>
       <CardContent>
-        <DataTable 
-          groupedData={groupedData}
-          onEdit={(id) => navigate(`/edit/${id}`)}
-          onView={(id) => navigate(`/view/${id}`)}
-        />
+        {isLoading ? (
+          <div className="flex justify-center items-center p-4">
+            Loading transactions...
+          </div>
+        ) : (
+          <DataTable 
+            groupedData={groupedData}
+            onEdit={(id) => navigate(`/edit/${id}`)}
+            onView={(id) => navigate(`/view/${id}`)}
+          />
+        )}
       </CardContent>
     </Card>
   );

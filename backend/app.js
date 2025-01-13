@@ -1,14 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const transactionRoutes = require('./routes/transactionRoutes');
-
 const app = express();
+const bodyParser = require('body-parser');
+const transactionRoutes = require('./routes/transactionRoutes.js');
+
+
 const PORT = 5000;
 const mongoose = require('mongoose');
 
 
-mongoose.connect('mongodb://localhost/your_database_name', {
+mongoose.connect('mongodb://localhost/transactionDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

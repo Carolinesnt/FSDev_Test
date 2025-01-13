@@ -1,11 +1,32 @@
+// /project/workspace/frontend/src/services/api.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/transactions';
+// Create axios instance with base configuration
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:5000/api/', // Change to port 5000 and the appropriate API path
+  timeout: 5000,
+  headers: {
+      'Content-Type': 'application/json',
+  }
+});
 
+// Define the API methods
+// export const api = {
+//   getAllTransactions: () => axiosInstance.get('/transactions'), // Fixed the path
+//   getTransaction: (id) => axiosInstance.get(`/transactions/${id}`), // Fixed the path
+//   createTransaction: (data) => axiosInstance.post('/transactions', data), // Fixed the path
+//   updateTransaction: (id, data) => axiosInstance.put(`/transactions/${id}`, data), // Fixed the path
+//   deleteTransaction: (id) => axiosInstance.delete(`/transactions/${id}`) // Fixed the path
+// };
+
+// api.js
 export const api = {
-  getAllTransactions: () => axios.get(API_URL),
-  getTransactionById: (id) => axios.get(`${API_URL}/${id}`),
-  createTransaction: (data) => axios.post(API_URL, data),
-  updateTransaction: (id, data) => axios.put(`${API_URL}/${id}`, data),
-  deleteTransaction: (id) => axios.delete(`${API_URL}/${id}`)
+  getAllTransactions: () => axiosInstance.get('/transactions'),
+  getTransaction: (id) => axiosInstance.get(`/transactions/${id}`), // This already exists
+  getTransactionById: (id) => axiosInstance.get(`/transactions/${id}`), // Add this line
+  createTransaction: (data) => axiosInstance.post('/transactions', data),
+  updateTransaction: (id, data) => axiosInstance.put(`/transactions/${id}`, data),
+  deleteTransaction: (id) => axiosInstance.delete(`/transactions/${id}`)
 };
+
+
