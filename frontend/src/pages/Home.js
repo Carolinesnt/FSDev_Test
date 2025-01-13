@@ -1,4 +1,3 @@
-// Home.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -14,14 +13,18 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const groupDataByDate = (data) => {
-    if (!Array.isArray(data)) {
-      console.error('Data is not an array:', data);
+  const groupDataByDate = (transactions) => {
+    if (!Array.isArray(transactions)) {
+      console.error('Transactions is not an array:', transactions);
       return {};
     }
     
-    return data.reduce((acc, transaction) => {
-      const date = new Date(transaction.transactionDate);
+    return transactions.reduce((acc, transaction) => {
+      // Pastikan transactionDate ada, jika tidak gunakan createdAt atau tanggal hari ini
+      const date = transaction.transactionDate 
+        ? new Date(transaction.transactionDate)
+        : new Date();
+        
       const year = date.getFullYear();
       const month = date.getMonth();
   
@@ -46,12 +49,14 @@ const Home = () => {
       setError(null);
       const response = await api.getAllTransactions();
       
-      if (!response || !response.data) {
+      // Periksa apakah response memiliki properti data dan data adalah array
+      if (!response?.data?.data || !Array.isArray(response.data.data)) {
         throw new Error('Invalid response format');
       }
 
-      setTransactions(response.data);
-      setGroupedData(groupDataByDate(response.data));
+      const transactionsData = response.data.data;
+      setTransactions(transactionsData);
+      setGroupedData(groupDataByDate(transactionsData));
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setError(error.message || 'Failed to fetch transactions');
