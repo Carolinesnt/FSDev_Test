@@ -1,3 +1,4 @@
+// Home.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -59,27 +60,45 @@ const Home = () => {
     }
   };
 
-  if (error) {
+  const renderContent = () => {
+    if (error) {
+      return (
+        <Card className="mt-4">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-red-500 mb-4">Error loading transactions: {error}</p>
+              <Button onClick={fetchTransactions}>
+                Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <Card className="mt-4">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              Loading transactions...
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
     return (
-      <Card className="w-full">
-        <CardContent className="p-6">
-          <div className="text-red-600">
-            Error loading transactions: {error}
-            <Button 
-              onClick={fetchTransactions} 
-              className="ml-4"
-              variant="outline"
-            >
-              Retry
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <DataTable 
+        groupedData={groupedData}
+        onEdit={(id) => navigate(`/edit/${id}`)}
+        onView={(id) => navigate(`/view/${id}`)}
+      />
     );
-  }
+  };
 
   return (
-    <Card className="w-full">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Transactions</CardTitle>
         <Button 
@@ -90,17 +109,7 @@ const Home = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center p-4">
-            Loading transactions...
-          </div>
-        ) : (
-          <DataTable 
-            groupedData={groupedData}
-            onEdit={(id) => navigate(`/edit/${id}`)}
-            onView={(id) => navigate(`/view/${id}`)}
-          />
-        )}
+        {renderContent()}
       </CardContent>
     </Card>
   );
